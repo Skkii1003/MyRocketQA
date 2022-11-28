@@ -16,7 +16,7 @@ def config():
 def index(file_name):
     def readFile(file_name):
         with gzip.open(file_name, "r") as f:
-            for i, line in enumerate(tqdm(f)):
+            for i, line in enumerate(f):
                 try:
                     para_json = json.loads(line)
                     doc = Document(
@@ -39,6 +39,28 @@ def index(file_name):
     f = Flow().load_config('flows/index.yml')
     with f:
         f.post(on='/index', inputs=readFile(file_name), show_progress=True, request_size=32)
+
+def query_cli():
+    def print_topk(resp):
+        for doc in resp.docs:
+            print(doc)
+            doc = Document(doc)
+            print(f'🤖 Answers:')
+            for m in doc.matches:
+                print(f'\t{m.tags["title"]}')
+                print(f'\t{m.tags["para"]}')
+                print(f'-----')
+
+    f = Flow().load_config('flows/query.yml')
+    with f:
+        f.protocol = 'grpc'
+        print(f'🤖 Hi there, please ask me questions.\n'
+              'For example, "Can a honey bee sting a human more than once?"\n')
+        while True:
+            text = input('Question: (type `\q` to quit)')
+            if text == '\q' or not text:
+                return
+            f.post(on='/search', inputs=[Document(content=text), ], on_done=print_topk)
 
 def main(task):
     config()
