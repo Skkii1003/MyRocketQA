@@ -1,14 +1,16 @@
-import sys
 import os
+import sys
 import webbrowser
 from pathlib import Path
+
 from jina import Document, Flow
 
 
 def config():
-    os.environ.setdefault('JINA_USE_CUDA', 'False')
+    os.environ.setdefault('JINA_USE_CUDA', 'True')
     os.environ.setdefault('JINA_PORT_EXPOSE', '8886')
     os.environ.setdefault('JINA_WORKSPACE', './workspace')
+
 
 
 def index(file_name):
