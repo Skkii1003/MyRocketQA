@@ -11,7 +11,7 @@ from tqdm import tqdm
 def config():
     os.environ.setdefault('JINA_USE_CUDA', 'True')
     os.environ.setdefault('JINA_PORT_EXPOSE', '8886')
-    os.environ.setdefault('JINA_WORKSPACE', '/content/drive/MyDrive/workspace')
+    os.environ.setdefault('JINA_WORKSPACE', './workspace')
 
 def index(file_name):
     def readFile(file_name):
