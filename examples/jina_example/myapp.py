@@ -11,7 +11,7 @@ from tqdm import tqdm
 def config():
     os.environ.setdefault('JINA_USE_CUDA', 'True')
     os.environ.setdefault('JINA_PORT_EXPOSE', '8886')
-    os.environ.setdefault('JINA_WORKSPACE', './workspace')
+    os.environ.setdefault('JINA_WORKSPACE', '/content/drive/MyDrive/workspace')
 
 def index(file_name):
     def readFile(file_name):
@@ -40,7 +40,7 @@ def index(file_name):
     with f:
         f.post(on='/index', inputs=readFile(file_name), show_progress=True, request_size=32)
 
-def query_cli():
+def query():
     def print_topk(resp):
         for doc in resp.docs:
             print(doc)
@@ -50,6 +50,28 @@ def query_cli():
                 print(f'\t{m.tags["title"]}')
                 print(f'\t{m.tags["para"]}')
                 print(f'-----')
+
+    f = Flow().load_config('flows/query.yml')
+    with f:
+        f.protocol = 'grpc'
+        print(f'running questions in strategyqa_test.json...\n')
+        with open("strategyqa_dataset/strategyqa_test.json", "r") as q:
+            for i,line in enumerate(q):
+                question = json.loads(line)
+                text = question["question"]
+                f.post(on='/search', inputs=[Document(content=text), ], on_done=print_topk)
+
+
+def query_cli():
+    def print_topk(resp):
+        for doc in resp.docs:
+            print(doc)
+            doc = Document(doc)
+            print(f'🤖 Answers:')
+            for m in doc.matches:
+                print(f'\t{m.tags["title"]}')
+                print(f'\t{m.tags["para"]}')
+                print(f'------------------')
 
     f = Flow().load_config('flows/query.yml')
     with f:
@@ -72,6 +94,8 @@ def main(task):
         index(data_fn)
     elif task == 'query_cli':
         query_cli()
+    elif task == 'query':
+        query()
 
 
 if __name__ == '__main__':
