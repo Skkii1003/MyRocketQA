@@ -19,6 +19,7 @@ executors:
     uses: jinahub://SimpleIndexer/v0.9
     uses_metas:
       workspace: $JINA_WORKSPACE
+    timeout_ready: '-1'
   - name: ranker
     uses: RocketQAReranker
     py_module:
