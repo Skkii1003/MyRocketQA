@@ -28,5 +28,5 @@ executors:
         model: v1_marco_ce
         use_cuda: $JINA_USE_CUDA
         device_id: 0
-        batch_size: 32
+        batch_size: 16
     timeout_ready: '-1'
