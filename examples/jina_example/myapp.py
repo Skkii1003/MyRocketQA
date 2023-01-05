@@ -12,7 +12,8 @@ def config():
     os.environ.setdefault('JINA_PORT_EXPOSE', '8886')
     os.environ.setdefault('JINA_WORKSPACE', './workspace')
 
-#建立索引
+
+# 建立索引
 def index(file_name):
     def readFile(file_name):
         with gzip.open(file_name, "r") as f:
@@ -40,7 +41,8 @@ def index(file_name):
     with f:
         f.post(on='/index', inputs=readFile(file_name), show_progress=True, request_size=32)
 
-#搜索并排序
+
+# 搜索并排序
 def query():
     def print_topk(resp):
         for doc in resp.docs:
@@ -56,9 +58,9 @@ def query():
     with f:
         f.protocol = 'grpc'
         question = "Can a honey bee sting a human more than once?"
-        print(question+'\n')
+        print(question + '\n')
         print(f'searching...\n')
-        f.post(on='/search', inputs=[Document(content=question), ], on_done=print_topk)
+        f.post(on='/search', inputs=[Document(content=question)], show_progress=True, on_done=print_topk)
 
 
 def query_cli():
@@ -83,6 +85,7 @@ def query_cli():
                 return
             f.post(on='/search', inputs=[Document(content=text), ], on_done=print_topk)
 
+
 def main(task):
     config()
     if task == 'index':
@@ -100,4 +103,3 @@ def main(task):
 if __name__ == '__main__':
     task = sys.argv[1]
     main(task)
-
