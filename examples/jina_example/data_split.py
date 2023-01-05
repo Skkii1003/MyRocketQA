@@ -6,7 +6,7 @@ from tqdm import tqdm
 
 def save(filename, data):
     with open(filename, 'a', encoding='utf-8') as f:
-        f.write(data)
+        json.dump(data, f, ensure_ascii=False)
 
 
 if __name__ == '__main__':
@@ -19,9 +19,8 @@ if __name__ == '__main__':
         save_num = 0
         for i, line in enumerate(tqdm(f)):
             para_json = json.loads(line)
-            data = json.dumps(para_json)
             if save_num >= (len / 7):
                 save_num = 0
                 split_num += 1
-            save(save_name + str(split_num), data)
+            save(save_name + str(split_num), para_json)
             save_num += 1

@@ -63,8 +63,8 @@ def index_split(file_name):
                 except:
                     print(f'skip line {i}')
                     continue
-
-    os.environ.setdefault('JINA_WORKSPACE', './workspace'+file_name[11:16])
+    workpath = './workspace' + file_name[11:16]
+    os.environ.setdefault('JINA_WORKSPACE', workpath)
     f = Flow().load_config('flows/index.yml')
     with f:
         f.post(on='/index', inputs=readFile(file_name), show_progress=True, request_size=32)
@@ -125,7 +125,7 @@ def main(task):
     elif task == 'index_split':
         data_fn = sys.argv[2] if len(sys.argv) >= 3 else 'toy_data/test.tsv'
         print(f'indexing {data_fn}')
-        index(data_fn)
+        index_split(data_fn)
     elif task == 'query_cli':
         query_cli()
     elif task == 'query':
