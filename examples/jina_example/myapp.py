@@ -64,6 +64,7 @@ def index_split(file_name):
                     print(f'skip line {i}')
                     continue
 
+    os.environ.setdefault('JINA_WORKSPACE', './workspace'+file_name[11:16])
     f = Flow().load_config('flows/index.yml')
     with f:
         f.post(on='/index', inputs=readFile(file_name), show_progress=True, request_size=32)
