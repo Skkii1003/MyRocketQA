@@ -4,6 +4,7 @@ import os
 import sys
 from pathlib import Path
 
+import jsonlines
 from jina import Document, Flow
 
 
@@ -43,7 +44,7 @@ def index(file_name):
 
 def index_split(file_name):
     def readFile(file_name):
-        with open(file_name, "r") as f:
+        with jsonlines.open(file_name, "r") as f:
             for i, line in enumerate(f):
                 try:
                     para_json = json.loads(line)
@@ -63,8 +64,6 @@ def index_split(file_name):
                 except:
                     print(f'skip line {i}')
                     continue
-    workpath = './workspace' + file_name[11:16]
-    os.environ.setdefault('JINA_WORKSPACE', workpath)
     f = Flow().load_config('flows/index.yml')
     with f:
         f.post(on='/index', inputs=readFile(file_name), show_progress=True, request_size=32)
@@ -119,11 +118,11 @@ def main(task):
     if task == 'index':
         if Path('./workspace').exists():
             print('./workspace exists, please deleted it if you want to reindexi')
-        data_fn = sys.argv[2] if len(sys.argv) >= 3 else 'toy_data/test.tsv'
+        data_fn = sys.argv[2]
         print(f'indexing {data_fn}')
         index(data_fn)
     elif task == 'index_split':
-        data_fn = sys.argv[2] if len(sys.argv) >= 3 else 'toy_data/test.tsv'
+        data_fn = sys.argv[2]
         print(f'indexing {data_fn}')
         index_split(data_fn)
     elif task == 'query_cli':

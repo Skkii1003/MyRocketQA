@@ -1,12 +1,14 @@
 import gzip
 import json
+import jsonlines
 
 from tqdm import tqdm
 
 
 def save(filename, data):
-    with open(filename, 'a', encoding='utf-8') as f:
-        json.dump(data, f, ensure_ascii=False)
+    with jsonlines.open(filename, 'a') as f:
+        d = json.dumps(data)
+        f.write(d)
 
 
 if __name__ == '__main__':
@@ -22,6 +24,6 @@ if __name__ == '__main__':
             if save_num >= (len / 7):
                 save_num = 0
                 split_num += 1
-            save_path = save_name + str(split_num) + '.json'
+            save_path = save_name + str(split_num) + '.jsonl'
             save(save_path, para_json)
             save_num += 1
