@@ -30,7 +30,7 @@ def index(file_name):
                               'title': para_json["title"],
                               'section': para_json.get("section") or "",
                               'subsection': " :: ".join(para_json.get("headers")) or "",
-                              'text': para_json["para"]
+                              'para': para_json["para"]
                               }
                     )
                     yield doc
@@ -42,6 +42,7 @@ def index(file_name):
     with f:
         f.post(on='/index', inputs=readFile(file_name), show_progress=True, request_size=32)
 
+
 def index_split(file_name):
     def readFile(file_name):
         with jsonlines.open(file_name, "r") as f:
@@ -50,20 +51,16 @@ def index_split(file_name):
                     para_json = json.loads(line)
                     doc = Document(
                         id=f'{i}',
-                        tags={'docId': para_json["docid"],
-                              'secId': para_json["secid"],
-                              'headerId': para_json["headerid"],
-                              'paraId': para_json["para_id"],
-                              'title': para_json["title"],
-                              'section': para_json.get("section") or "",
-                              'subsection': " :: ".join(para_json.get("headers")) or "",
-                              'text': para_json["para"]
-                              }
+                        tags={
+                            'title': para_json["title"],
+                            'para': para_json["para"]
+                        }
                     )
                     yield doc
                 except:
                     print(f'skip line {i}')
                     continue
+
     f = Flow().load_config('flows/index.yml')
     with f:
         f.post(on='/index', inputs=readFile(file_name), show_progress=True, request_size=32)
